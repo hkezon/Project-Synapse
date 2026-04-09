@@ -4,6 +4,7 @@ const axios = require('axios');
 const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 // ==========================================
 // 1. 物理连接与 Vault 锚定
@@ -86,6 +87,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// 极其关键的一步：让 Node.js 直接把前端网页发给用户
+app.use(express.static(__dirname));
+
+// 处理前端的自然语言指令
 app.post('/api/chat', async (req, res) => {
     try {
         const userIntent = req.body.intent; 
@@ -115,9 +120,10 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-const PORT = 3000;
+// 云端动态端口注入
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`\n[系统启动] Project Synapse 核心大脑已上线。`);
-    console.log(`[雷达] 正在监听端口: http://localhost:${PORT}`);
-    console.log(`[雷达] 后端已就绪，等待前端 UI 接入...`);
+    console.log(`[雷达] 正在监听公网端口: ${PORT}`);
+    console.log(`[雷达] 正在持续扫描指令传入...`);
 });
