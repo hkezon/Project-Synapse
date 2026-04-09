@@ -18,15 +18,6 @@ It is built with a unique **Fault-Tolerant & Self-Healing Architecture**. When m
 * **Self-Healing Execution (Plan B):** Built-in tactical downgrade protocols. If route planning fails (e.g., `Error 51000`), the Agent autonomously executes alternative smart contract interactions to preserve execution flow.
 * **Cyber-Terminal UI:** A minimalist, hacker-style local dashboard for real-time monitoring of AI cognitive processes and blockchain receipts.
 
-## 🏗️ Architecture
-
-
-
-1.  **Input Layer:** User submits natural language intent via the local Cyber UI.
-2.  **Cognitive Brain (AI):** Node.js backend pushes the prompt to Gemini API, enforcing a strict JSON schema response.
-3.  **Nervous System (Routing):** The structured JSON is mapped to the OKX V6 Aggregator to fetch executable `calldata`.
-4.  **Execution Spine (Smart Contract):** The `calldata` is broadcasted via ethers.js to a dedicated Vault Contract on the X Layer Testnet, returning the final `TxHash`.
-
 ## 🚀 Quick Start
 ### Prerequisites
 * Node.js (v18+)
@@ -37,18 +28,4 @@ It is built with a unique **Fault-Tolerant & Self-Healing Architecture**. When m
 ### Installation
 1. Clone the repository and install dependencies:
    ```bash
-   npm install express cors ethers axios dotenv
-   ```
-2.Configure your .env file (See .env.example).
-3.Boot the Synapse Core:
-   ```bash
-node synapse_core.js
-```
-4.Open index.html in your browser and initiate your first natural language on-chain strike.
-
-🛣️ Roadmap (Next Steps)
-Multi-chain Expansion: Scale beyond X Layer to fully support Ethereum Mainnet, Arbitrum, and Base.
-
-Complex Yield Strategies: Support for multi-step intents (e.g., "Swap 10 USDC to ETH and stake it on Lido").
-
-Verifiable Escrow Integration: Connecting the execution layer to a verifiable agent-to-agent escrow executor.
+   npm install
