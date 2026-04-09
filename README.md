@@ -29,3 +29,12 @@ It is built with a unique **Fault-Tolerant & Self-Healing Architecture**. When m
 1. Clone the repository and install dependencies:
    ```bash
    npm install
+   
+   ```
+2.Configure your .env file (See .env.example).
+
+3.Boot the Synapse Core:
+```bash
+npm start
+   ```
+4.Open index.html in your browser and initiate your first natural language on-chain strike.
