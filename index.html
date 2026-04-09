@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Synapse | 意图控制台</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .console-box {
+            background: #111;
+            border: 1px solid #00ffcc;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+            width: 800px;
+            max-width: 90%;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #00ffcc;
+            color: #000;
+            padding: 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        .terminal {
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            color: #00ffcc;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .input-area {
+            display: flex;
+            border-top: 1px solid #333;
+        }
+        input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            outline: none;
+        }
+        button {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 0 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #fff;
+        }
+        .log-entry { 
+            margin-bottom: 10px; 
+            word-break: break-all; /* 防止长文本撑破网页 */
+        }
+        .log-system { color: #888; }
+        .log-user { color: #fff; }
+        .log-success { color: #00ff00; }
+        .log-error { color: #ff3333; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="console-box">
+    <div class="header">
+        <span>SYSTEM: PROJECT SYNAPSE V1.0</span>
+        <span>STATUS: ONLINE</span>
+    </div>
+    <div class="terminal" id="terminalBox">
+        <div class="log-entry log-system">>>> 系统初始化完成...</div>
+        <div class="log-entry log-system">>>> 正在连接本地核心大脑 (localhost:3000)... 成功。</div>
+        <div class="log-entry log-system">>>> 目标网络: X Layer 测试网</div>
+        <div class="log-entry log-system">>>> 请输入自然语言操作指令 <span class="blink">_</span></div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="intentInput" placeholder="例如: 帮我在 X Layer 上把 0.0001 测试币换成其他资产" autocomplete="off" onkeypress="handleEnter(event)">
+        <button onclick="sendIntent()" id="sendBtn">EXECUTE</button>
+    </div>
+</div>
+
+<script>
+    const $ = (id) => document.getElementById(id);
+
+    const terminal = $('terminalBox');
+    const inputField = $('intentInput');
+    const sendBtn = $('sendBtn');
+
+    function appendLog(text, type = 'log-system') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = text;
+        terminal.appendChild(div);
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') sendIntent();
+    }
+
+    async function sendIntent() {
+        const intent = inputField.value.trim();
+        if (!intent) return;
+
+        inputField.value = '';
+        inputField.disabled = true;
+        sendBtn.disabled = true;
+        
+        appendLog(`[USER] ${intent}`, 'log-user');
+        appendLog(`>>> 正在将意图传输至 Gemini 大脑，请求链上路由... (请等待区块确认)`, 'log-system');
+
+        try {
+            const response = await fetch('http://localhost:3000/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ intent: intent })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                appendLog(`[BRAIN] 意图解析成功: ${JSON.stringify(data.parsedIntent)}`, 'log-success');
+                appendLog(`[CHAIN] 交易执行完毕!`, 'log-success');
+                appendLog(`[RECEIPT] TxHash: ${data.txHash}`, 'log-success');
+            } else {
+                appendLog(`[ERROR] 执行失败: ${data.error}`, 'log-error');
+            }
+        } catch (error) {
+            appendLog(`[ERROR] 无法连接到本地大脑，请确认黑框终端的 node synapse_core.js 正在运行。`, 'log-error');
+        } finally {
+            inputField.disabled = false;
+            sendBtn.disabled = false;
+            inputField.focus();
+        }
+    }
+</script>
+
+</body>
+</html>
