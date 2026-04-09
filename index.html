@@ -70,7 +70,7 @@
         }
         .log-entry { 
             margin-bottom: 10px; 
-            word-break: break-all; /* 防止长文本撑破网页 */
+            word-break: break-all;
         }
         .log-system { color: #888; }
         .log-user { color: #fff; }
@@ -89,7 +89,7 @@
     </div>
     <div class="terminal" id="terminalBox">
         <div class="log-entry log-system">>>> 系统初始化完成...</div>
-        <div class="log-entry log-system">>>> 正在连接本地核心大脑 (localhost:3000)... 成功。</div>
+        <div class="log-entry log-system">>>> 正在连接云端核心大脑... 成功。</div>
         <div class="log-entry log-system">>>> 目标网络: X Layer 测试网</div>
         <div class="log-entry log-system">>>> 请输入自然语言操作指令 <span class="blink">_</span></div>
     </div>
@@ -130,7 +130,8 @@
         appendLog(`>>> 正在将意图传输至 Gemini 大脑，请求链上路由... (请等待区块确认)`, 'log-system');
 
         try {
-            const response = await fetch('http://localhost:3000/api/chat', {
+            // 注意这里：已经改为相对路径，适配任何云端域名
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ intent: intent })
@@ -146,7 +147,7 @@
                 appendLog(`[ERROR] 执行失败: ${data.error}`, 'log-error');
             }
         } catch (error) {
-            appendLog(`[ERROR] 无法连接到本地大脑，请确认黑框终端的 node synapse_core.js 正在运行。`, 'log-error');
+            appendLog(`[ERROR] 无法连接到云端大脑，请确认服务器状态。`, 'log-error');
         } finally {
             inputField.disabled = false;
             sendBtn.disabled = false;
